@@ -1,0 +1,77 @@
+/* FLOATING BUTTON */
+.floating-container {
+  position: fixed;
+  width: 100px;
+  height: 100px;
+  bottom: 0;
+  right: 0;
+  margin: 35px 50px;
+  z-index: 100;
+}
+
+.floating-button {
+  position: absolute;
+  width: 65px;
+  height: 65px;
+  bottom: 0;
+  border-radius: 50%;
+  right: 0;
+  text-align: center;
+  line-height: 65px;
+  font-size: 23px;
+  z-index: 100;
+  cursor: pointer;
+  box-shadow: 0 10px 25px -5px rgba(196, 196, 196, 0.6);
+  -webkit-transition: all 0.3s;
+  transition: all 0.3s;
+  border: none;
+  outline: none;
+  box-shadow: none;
+}
+
+.open {
+  background-color: #eaeaea;
+}
+
+.open:hover {
+  background-color: #d8d8d8;
+  transition: 0.5s all ease;
+}
+
+.file-input {
+  border-radius: 3px;
+  background-color: rgb(227, 227, 227);
+  padding: 3px 5px;
+}
+
+.floating-container:hover {
+  height: 200px;
+}
+.floating-container:hover .floating-button {
+  box-shadow: 0 10px 25px rgba(91, 126, 231, 0.6);
+  transform: translateY(5px);
+  transition: all 0.3s;
+}
+
+.form-control,
+.form-select,
+.form-check-input,
+.file-input {
+  border: 0px solid transparent;
+  outline: 0.3px solid grey;
+  box-shadow: 5px 5px transparent;
+}
+
+.form-control:focus,
+.form-select:focus,
+.file-input:focus {
+  border: 0px solid #333333;
+  outline: 0.3px solid #333333;
+  box-shadow: 5px 5px #333333;
+}
+
+.form-check-input:focus {
+  border: 0.5px solid transparent;
+  outline: 1px solid grey;
+  box-shadow: 0.5px 0.5px transparent;
+}
