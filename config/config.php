@@ -1,6 +1,6 @@
 <?php
 
-// session_start();
+session_start();
 
 function errorHandler($errno, $errstr, $errfile, $errline)
 {
@@ -35,4 +35,34 @@ try {
 } catch (PDOException $e) {
     errorHandler(E_WARNING, $e->getMessage(), $e->getFile(), $e->getLine());
     die("Connection failed: " . $e->getMessage());
+}
+
+
+if (!isset($_SESSION['id'])) {
+    header("Location: index.php");
+}
+
+$user_id  = htmlspecialchars($_SESSION['id']);
+
+try {
+    $user = $conn->prepare("SELECT *FROM users WHERE id = :id");
+    $user->bindParam(":id", $user_id);
+    $user->execute();
+
+    $getUser = $user->fetchAll(PDO::FETCH_OBJ);
+
+    if ($getUser) {
+        foreach ($getUser as $row) {
+            $user_id = $row->id;
+            $name = $row->name;
+            $isAdmin = $row->isAdmin;
+            $dept = $row->dept;
+            $profile = $row->profile;
+            $firstLogin = $row->firstLogin;
+            $reset = $row->reset;
+            $disabled = $row->disabled;
+        }
+    }
+} catch (PDOException $e) {
+    errorHandler(E_WARNING, $e->getMessage(), $e->getFile(), $e->getLine());
 }

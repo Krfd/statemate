@@ -28,14 +28,7 @@ if (isset($_POST['create'])) {
         errorHandler(E_WARNING, $e->getMessage(), $e->getFile(), $e->getLine());
     }
 }
-
-
-
-
 ?>
-
-
-
 
 <!DOCTYPE html>
 <html lang="en">

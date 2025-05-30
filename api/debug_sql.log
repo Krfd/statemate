@@ -1,0 +1,51 @@
+SELECT id, cardCode, cardName, mdn, repo_status FROM customers WHERE branch = :branch
+{":branch":"Viac"}
+Rows returned: 2
+SELECT id, cardCode, cardName, mdn, repo_status FROM customers WHERE branch = :branch
+{":branch":"Viac"}
+Rows returned: 2
+SELECT id, cardCode, cardName, mdn, repo_status FROM customers WHERE branch = :branch
+{":branch":"Viac"}
+Rows returned: 2
+SELECT id, cardCode, cardName, mdn, repo_status FROM customers WHERE branch = :branch
+{":branch":"Viac"}
+Rows returned: 2
+SELECT id, cardCode, cardName, mdn, repo_status FROM customers WHERE branch = :branch
+{":branch":"Agdao"}
+Rows returned: 0
+SELECT id, cardCode, cardName, mdn, repo_status FROM customers WHERE branch = :branch
+{":branch":"Viac"}
+Rows returned: 2
+SELECT id, cardCode, cardName, mdn, repo_status FROM customers WHERE branch = :branch
+{":branch":"Viac"}
+Rows returned: 2
+SELECT id, cardCode, cardName, mdn, repo_status FROM customers WHERE branch = :branch
+{":branch":"Viac"}
+Rows returned: 2
+SELECT id, cardCode, cardName, mdn, repo_status FROM customers WHERE branch = :branch
+{":branch":"Showroom"}
+Rows returned: 1
+SELECT id, cardCode, cardName, mdn, repo_status FROM customers WHERE branch = :branch
+{":branch":"Agdao"}
+Rows returned: 0
+SELECT id, cardCode, cardName, mdn, repo_status FROM customers WHERE branch = :branch
+{":branch":"Viac"}
+Rows returned: 2
+SELECT id, cardCode, cardName, mdn, repo_status FROM customers WHERE branch = :branch
+{":branch":"Viac"}
+Rows returned: 2
+SELECT id, cardCode, cardName, mdn, repo_status FROM customers WHERE branch = :branch
+{":branch":"Viac"}
+Rows returned: 2
+SELECT id, cardCode, cardName, mdn, repo_status FROM customers WHERE branch = :branch
+{":branch":"Agdao"}
+Rows returned: 0
+SELECT id, cardCode, cardName, mdn, repo_status FROM customers WHERE branch = :branch
+{":branch":"Showroom"}
+Rows returned: 1
+SELECT id, cardCode, cardName, mdn, repo_status FROM customers WHERE branch = :branch
+{":branch":"Showroom"}
+Rows returned: 1
+SELECT id, cardCode, cardName, mdn, repo_status FROM customers WHERE branch = :branch
+{":branch":"Viac"}
+Rows returned: 2

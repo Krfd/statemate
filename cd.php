@@ -1,3 +1,9 @@
+<?php
+
+include("config/config.php");
+
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -25,12 +31,65 @@
   <link href="assets/vendor/quill/quill.bubble.css" rel="stylesheet">
   <link href="assets/vendor/remixicon/remixicon.css" rel="stylesheet">
   <link href="assets/vendor/simple-datatables/style.css" rel="stylesheet">
+  <link href="lib/sweetalert/dist/sweetalert2.min.css" rel="stylesheet">
 
   <!-- Template Main CSS File -->
   <link href="assets/css/style.css" rel="stylesheet">
 </head>
 
 <body>
+  <!-- POST COMMENT MODAL -->
+  <div class="modal fade" id="postCommentModal" tabindex="-1" aria-labelledby="postCommentModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="postCommentModalLabel">Post a Comment</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <form id="commentForm" method="post">
+            <div class="d-flex justify-content-between gap-3 col-12 mb-3">
+              <input type="hidden" name="user_id" value="<?php echo $user_id ?>">
+              <input type="hidden" name="customerId" id="customerId">
+              <input type="hidden" name="customerCardCode" id="customerCardCode">
+              <input type="hidden" name="customerCardName" id="customerCardName">
+              <input type="hidden" name="customerBranch" id="customerBranch">
+              <div class="col">
+                <label for="author">Author:</label>
+                <input type="text" name="author" class="form-control" id="author" required>
+              </div>
+              <div class="col">
+                <label for="branchName">Branch:</label>
+                <select name="branchName" id="branchName" class="form-select" required>
+                  <option value="Agdao">AGDAO</option>
+                  <option value="Showroom">SHOWROOM</option>
+                  <option value="Viac">VIAC</option>
+                </select>
+              </div>
+            </div>
+            <div class="d-flex justify-content-between gap-3 col-12 mb-3">
+              <div class="col">
+                <label for="postingDate">Posting Date:</label>
+                <input type="date" class="form-control" name="postingDate" id="postingDate" required>
+              </div>
+              <div class="col">
+                <label for="createdDate">Created Date:</label>
+                <input type="date" class="form-control" name="createdDate" id="createdDate" required>
+              </div>
+            </div>
+            <div class="mb-3">
+              <label for="commentText" class="form-label">Remarks:</label>
+              <textarea class="form-control" id="commentText" rows="4" name="remarks" required></textarea>
+            </div>
+            <div class="modal-footer">
+              <button type="reset" class="btn btn-danger">Reset</button>
+              <button type="submit" class="btn btn-primary">Post</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
 
   <!-- ======= Header ======= -->
   <header id="header" class="header fixed-top d-flex align-items-center">
@@ -41,22 +100,8 @@
       </a>
       <i class="bi bi-list toggle-sidebar-btn"></i>
     </div>
-    <!-- End Logo -->
-    <div class="search-bar">
-      <form class="search-form d-flex align-items-center" method="POST" action="#">
-        <input type="text" name="query" placeholder="Search" title="Enter search keyword">
-        <button type="submit" title="Search"><i class="bi bi-search"></i></button>
-      </form>
-    </div>
-    <!-- End Search Bar -->
     <nav class="header-nav ms-auto">
       <ul class="d-flex align-items-center">
-        <li class="nav-item d-block d-lg-none">
-          <a class="nav-link nav-icon search-bar-toggle " href="#">
-            <i class="bi bi-search"></i>
-          </a>
-        </li>
-        <!-- End Search Icon-->
         <li class="nav-item dropdown">
           <a class="nav-link nav-icon" href="#" data-bs-toggle="dropdown">
             <i class="bi bi-bell"></i>
@@ -243,7 +288,7 @@
   <aside id="sidebar" class="sidebar">
     <ul class="sidebar-nav" id="sidebar-nav">
       <li class="nav-item">
-        <a class="nav-link collapsed" href="dashboard.html">
+        <a class="nav-link collapsed" href="dashboard.php">
           <i class="bi bi-grid"></i>
           <span>Dashboard</span>
         </a>
@@ -274,7 +319,7 @@
           <div class="col col-lg-3 shadow-sm p-3 p-md-5 border-end border-5 border-secondary-subtle">
             <h1 class="fw-bold">Statement of Account</h1>
             <div>
-              <form id="searchSOA" method="post" class="mt-3">
+              <form id="searchSOA" method="post" class="mt-3" onsubmit="fetchData(event)">
                 <div class="d-flex justify-content-center align-items-start gap-1">
                   <input type="checkbox" name="oldData" class="form-check-input" id="oldData">
                   <label class="fw-semibold text-center" for="oldData">View SOA From Old Data</label>
@@ -282,28 +327,28 @@
                 <div class="d-flex flex-column gap-3 mt-3">
                   <div class="d-flex gap-3 align-items-end">
                     <label for="code" class="form-label col-auto">Card Code:</label>
-                    <input type="text" class="form-control" name="cardcode" id="code" required>
+                    <input type="text" class="form-control" name="cardcode" id="code">
                   </div>
                   <div class="d-flex gap-3 align-items-end">
                     <label for="name" class="form-label col-auto">Card Name:</label>
-                    <input type="text" class="form-control" name="cardname" id="name" required>
+                    <input type="text" class="form-control" name="cardname" id="name">
                   </div>
                   <div class="d-flex gap-3 align-items-end">
                     <label for="branch" class="form-label col-auto">Branch:</label>
-                    <select name="branch" id="branch" class="form-select" required>
-                      <option value="AGDAO">AGDAO</option>
-                      <option value="SHOWROOM">SHOWROOM</option>
-                      <option value="VIAC">VIAC</option>
+                    <select name="branch" id="branch" class="form-select">
+                      <option value="Agdao">AGDAO</option>
+                      <option value="Showroom">SHOWROOM</option>
+                      <option value="Viac">VIAC</option>
                     </select>
                   </div>
                   <div class="d-flex gap-3 align-items-end">
                     <label for="si" class="form-label col-auto">MDN/SI #:</label>
-                    <input type="text" class="form-control" name="mdn" id="si" required>
+                    <input type="text" class="form-control" name="mdn" id="si">
                   </div>
                 </div>
                 <div class="d-flex justify-content-end gap-1 mt-3">
-                  <button class="btn btn-primary"><i class="bi bi-search d-block d-md-none"></i> <span class="d-none d-md-inline-flex">Search</span></button>
-                  <button class="btn btn-success"><i class="bi bi-arrow-clockwise d-block d-md-none"></i> <span class="d-none d-md-inline-flex">Refresh</span></button>
+                  <button type="submit" class="btn btn-primary"><i class="bi bi-search d-block d-md-none"></i> <span class="d-none d-md-inline-flex">Search</span></button>
+                  <button onclick="location.reload()" class="btn btn-success"><i class="bi bi-arrow-clockwise d-block d-md-none"></i> <span class="d-none d-md-inline-flex">Refresh</span></button>
                 </div>
               </form>
               <div class="mt-3">
@@ -317,11 +362,9 @@
                         <th>DocStatus</th>
                       </tr>
                     </thead>
-                    <tbody>
+                    <tbody id="searchResults">
                       <tr>
-                        <td><span class="text-decoration-underline text-primary">PLANTAS</span></td>
-                        <td><a href="#">20713</a></td>
-                        <td>OPEN</td>
+                        <td colspan="3" class="text-center">No Data Found</td>
                       </tr>
                     </tbody>
                   </table>
@@ -329,87 +372,90 @@
               </div>
             </div>
           </div>
+
           <!-- MIDDLE COLUMN -->
           <div class="col col-lg-5 shadow-sm p-3 p-md-5 border-end border-5 border-secondary-subtle">
             <div class="d-flex justify-content-between align-items-center">
               <h1 class="fw-bold">Customer Details</h1>
               <div class="d-flex gap-2">
-                <button class="btn btn-primary" data-bs-toggle="tooltip" title="Preview">Preview</button>
-                <button class="btn btn-danger" data-bs-toggle="tooltip" title="Print">Print</button>
+                <button type="button" class="btn btn-success" data-bs-toggle="tooltip" data-bs-placement="top" title="Post a Comment" id="postCommentBtn" disabled>
+                  <i class="bi bi-chat-right-dots d-block d-md-none"></i>
+                  <span class="d-none d-md-block">Post</span>
+                </button>
               </div>
             </div>
-            <form id="userForm" method="post">
+            <form id="userForm" method="post" class="mt-3">
               <div class="d-flex flex-column gap-3">
                 <div class="d-flex align-items-center gap-3 col-12 col-md-6">
                   <label for="cname" class="col-auto">Customer Name:</label>
-                  <input type="text" class="form-control" id="cname" required>
+                  <input type="text" class="form-control" id="cname" readonly required>
                 </div>
                 <div class="d-flex align-items-center gap-3 col-12 col-md-6">
                   <label for="address" class="col-auto">Address:</label>
-                  <input type="text" class="form-control" id="address" required>
+                  <input type="text" class="form-control" id="address" readonly required>
                 </div>
                 <div class="d-flex flex-column flex-md-row gap-3">
-                  <!-- FIRST COLUMN -->
+                  <!-- FIRST -->
                   <div class="d-flex flex-column gap-3 col">
                     <div class="d-flex flex-column gap-2">
                       <label for="inv_no" class="col-auto">Manual Inv #:</label>
-                      <input type="text" class="form-control" name="inv_no" id="inv_no" required>
+                      <input type="text" class="form-control" name="inv_no" id="inv_no" readonly required>
                     </div>
                     <div class="d-flex flex-column gap-2">
                       <label for="ddate" class="col-auto">Delivery Date:</label>
-                      <input type="text" class="form-control" name="delivery_date" id="ddate" required>
+                      <input type="text" class="form-control" name="delivery_date" id="ddate" readonly required>
                     </div>
                     <div class="d-flex flex-column gap-2">
                       <label for="terms" class="col-auto">Terms:</label>
-                      <input type="text" class="form-control" name="terms" id="terms" required>
+                      <input type="text" class="form-control" name="terms" id="terms" readonly required>
                     </div>
                     <div class="d-flex flex-column gap-2">
                       <label for="repo" class="col-auto">Repo Status:</label>
-                      <input type="text" class="form-control" name="repo" id="repo" required>
+                      <input type="text" class="form-control" name="repo" id="repo" readonly required>
                     </div>
                     <div class="d-flex flex-column gap-2">
                       <label for="uds" class="col-auto">UDS No:</label>
-                      <input type="text" class="form-control" name="uds" id="uds" required>
+                      <input type="text" class="form-control" name="uds" id="uds" readonly required>
                     </div>
                   </div>
-                  <!-- SECOND COLUMN -->
+                  <!-- SECOND -->
                   <div class="d-flex flex-column gap-3 col">
                     <div>
                       <label for="branch" class="form-label">Branch:</label>
-                      <input type="text" class="form-control" name="branch" id="branch" required>
+                      <input type="text" class="form-control" name="branch" id="branch_" readonly required>
                     </div>
                     <div>
                       <label for="dp" class="form-label">Down Payment:</label>
                       <br>
-                      <input type="text" class="form-control" name="down" id="dp" required>
+                      <input type="text" class="form-control" name="down" id="dp" readonly required>
                     </div>
                     <div>
                       <label for="mi" class="form-label">Monthly Installment:</label>
                       <br>
-                      <input type="text" class="form-control" name="monthly" id="mi" required>
+                      <input type="text" class="form-control" name="monthly" id="mi" readonly required>
                     </div>
                     <div>
                       <label for="udate" class="form-label">UDS Date:</label>
                       <br>
-                      <input type="text" class="form-control" name="uds_date" id="udate" required>
+                      <input type="text" class="form-control" name="uds_date" id="udate" readonly required>
                     </div>
                     <div>
                       <label for="rdate" class="form-label">Redeem Date:</label>
                       <br>
-                      <input type="text" class="form-control" name="redeem_date" id="rdate" required>
+                      <input type="text" class="form-control" name="redeem_date" id="rdate" readonly required>
                     </div>
                   </div>
-                  <!-- THIRD COLUMN -->
-                  <div class="d-flex flex-column gap-3 col align-self-start align-self-md-end">
+                  <!-- THIRD -->
+                  <div class="d-flex flex-row flex-md-column gap-3 col align-self-start align-self-md-end">
                     <div>
                       <label for="area" class="form-label">Area:</label>
                       <br>
-                      <input type="text" class="form-control" name="area" id="area" required>
+                      <input type="text" class="form-control" name="area" id="area" readonly required>
                     </div>
                     <div>
                       <label for="mbranch" class="form-label">Main Branch:</label>
                       <br>
-                      <input type="text" class="form-control" name="mbranch" id="mbranch" required>
+                      <input type="text" class="form-control" name="mbranch" id="mbranch" readonly required>
                     </div>
                   </div>
                 </div>
@@ -468,148 +514,92 @@
               </div>
             </form>
           </div>
+
           <!-- THIRD COLUMN -->
           <div class="col shadow-sm p-3 py-md-5 border-end border-5 border-secondary-subtle overflow-y-scroll" style="max-height: 90vh">
             <h1 class="fw-bold">Records</h1>
             <div class="list-group list-group-flush gap-3">
-              <li class="list-group-item rounded-1 p-3 shadow-sm">
-                <div class="d-flex justify-content-between align-items-start">
-                  <h4 class="fw-bold">July 26, 2025</h4>
-                  <button type="button" class="btn btn-dark btn-sm">Edit</button>
-                </div>
-                <hr>
-                <div class="d-flex flex-column gap-3">
-                  <div class="d-flex gap-3">
-                    <div>
-                      <label for="">Doc Date:</label>
-                      <br>
-                      <input type="text" class="form-control" name="ddate" value="July 25, 2025" required>
-                    </div>
-                    <div>
-                      <label for="">Date:</label>
-                      <br>
-                      <input type="text" class="form-control" name="date" value="May 29, 2025" required>
-                    </div>
-                  </div>
-                  <div class="d-flex gap-3">
-                    <div>
-                      <label for="">Name:</label>
-                      <input type="text" class="form-control" name="name" value="John Doe" required>
-                    </div>
-                    <div>
-                      <label for="">Address:</label>
-                      <input type="text" class="form-control" name="address" value="Iloilo City" required>
-                    </div>
-                  </div>
-                  <div class="d-flex gap-3">
-                    <div>
-                      <label for="">Account #:</label>
-                      <input type="text" class="form-control" name="name" value="356253768" required>
-                    </div>
-                    <div>
-                      <label for="">Unit:</label>
-                      <input type="text" class="form-control" name="address" value="Aircon" required>
-                    </div>
-                  </div>
-                  <div>
-                    <label for="">Remarks:</label>
-                    <textarea name="remarks" id="remarks" class="form-control" rows="5">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Laudantium architecto, tenetur deserunt quas quasi error libero. Sit dolores ea a ad dolor illum, cupiditate nostrum.
-                  </textarea>
-                  </div>
-                </div>
-              </li>
-              <li class="list-group-item rounded-1 p-3 shadow-sm">
-                <div class="d-flex justify-content-between align-items-start">
-                  <h4 class="fw-bold">July 26, 2025</h4>
-                  <button type="button" class="btn btn-dark btn-sm">Edit</button>
-                </div>
-                <hr>
-                <div class="d-flex flex-column gap-3">
-                  <div class="d-flex gap-3">
-                    <div>
-                      <label for="">Doc Date:</label>
-                      <br>
-                      <input type="text" class="form-control" name="ddate" value="July 25, 2025" required>
-                    </div>
-                    <div>
-                      <label for="">Date:</label>
-                      <br>
-                      <input type="text" class="form-control" name="date" value="May 29, 2025" required>
-                    </div>
-                  </div>
-                  <div class="d-flex gap-3">
-                    <div>
-                      <label for="">Name:</label>
-                      <input type="text" class="form-control" name="name" value="John Doe" required>
-                    </div>
-                    <div>
-                      <label for="">Address:</label>
-                      <input type="text" class="form-control" name="address" value="Iloilo City" required>
-                    </div>
-                  </div>
-                  <div class="d-flex gap-3">
-                    <div>
-                      <label for="">Account #:</label>
-                      <input type="text" class="form-control" name="name" value="356253768" required>
-                    </div>
-                    <div>
-                      <label for="">Unit:</label>
-                      <input type="text" class="form-control" name="address" value="Aircon" required>
-                    </div>
-                  </div>
-                  <div>
-                    <label for="">Remarks:</label>
-                    <textarea name="remarks" id="remarks" class="form-control" rows="5">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Laudantium architecto, tenetur deserunt quas quasi error libero. Sit dolores ea a ad dolor illum, cupiditate nostrum.
-                  </textarea>
-                  </div>
-                </div>
-              </li>
-              <li class="list-group-item rounded-1 p-3 shadow-sm">
-                <div class="d-flex justify-content-between align-items-start">
-                  <h4 class="fw-bold">July 26, 2025</h4>
-                  <button type="button" class="btn btn-dark btn-sm">Edit</button>
-                </div>
-                <hr>
-                <div class="d-flex flex-column gap-3">
-                  <div class="d-flex gap-3">
-                    <div>
-                      <label for="">Doc Date:</label>
-                      <br>
-                      <input type="text" class="form-control" name="ddate" value="July 25, 2025" required>
-                    </div>
-                    <div>
-                      <label for="">Date:</label>
-                      <br>
-                      <input type="text" class="form-control" name="date" value="May 29, 2025" required>
-                    </div>
-                  </div>
-                  <div class="d-flex gap-3">
-                    <div>
-                      <label for="">Name:</label>
-                      <input type="text" class="form-control" name="name" value="John Doe" required>
-                    </div>
-                    <div>
-                      <label for="">Address:</label>
-                      <input type="text" class="form-control" name="address" value="Iloilo City" required>
-                    </div>
-                  </div>
-                  <div class="d-flex gap-3">
-                    <div>
-                      <label for="">Account #:</label>
-                      <input type="text" class="form-control" name="name" value="356253768" required>
-                    </div>
-                    <div>
-                      <label for="">Unit:</label>
-                      <input type="text" class="form-control" name="address" value="Aircon" required>
-                    </div>
-                  </div>
-                  <div>
-                    <label for="">Remarks:</label>
-                    <textarea name="remarks" id="remarks" class="form-control" rows="5">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Laudantium architecto, tenetur deserunt quas quasi error libero. Sit dolores ea a ad dolor illum, cupiditate nostrum.
-                  </textarea>
-                  </div>
-                </div>
-              </li>
+
+              <?php
+
+              // // MAKE THIS AN API INSTEAD
+              // $history = $conn->prepare("SELECT * FROM posts");
+              // // ADD IN THE CONDITION (CUSTOMER CARD CODE, BRANCH)
+              // $history->execute();
+
+              // $getHistory = $history->fetchAll(PDO::FETCH_OBJ);
+
+              // try {
+              //   if ($getHistory) {
+              //     foreach ($getHistory as $item) {
+              //       $data_id = $item->id;
+              //       $customerId = $item->customerId;
+              //       $customerCardCode = $item->customerCardCode;
+              //       $customerCardName = $item->customerCardName;
+              //       $customerBranch = $item->customerBranch;
+              //       $author = $item->author;
+              //       $remarks = $item->remarks;
+              //       $branch = $item->branch;
+              //       $postingDate = $item->postingDate;
+              //       $createdDate = $item->createdDate;
+              //       $created = $item->created;
+              //       $modified = $item->modified;
+
+              //       $createdDate = date("M d, Y", strtotime($createdDate));
+              //       $postingDate = date("M d, Y", strtotime($postingDate));
+
+              //       if (!empty($modified)) {
+              //         $created = date("M d, Y", strtotime($modified));
+              //       } else {
+              //         $created = date("M d, Y", strtotime($created));
+              //       }
+
+              //       echo '<li class="list-group-item rounded-1 p-3 shadow-sm">
+              //       <div class="d-flex justify-content-between align-items-start">
+              //         <h4 class="fw-bold">' . $created . '</h4>
+              //         <button type="button" class="btn btn-dark btn-sm" data-bs-toggle="modal" data-bs-target="' . $data_id . '">Edit</button>
+              //       </div>
+              //       <hr>
+              //       <div class="d-flex flex-column flex-md-row gap-3 gap-md-5">
+              //         <div class="d-flex flex-column gap-1">
+              //           <div>
+              //             <small>Posting Date: ' . $postingDate . '</small>
+              //           </div>
+              //           <div>
+              //             <small>Created Date: ' . $createdDate . '</small>
+              //           </div>
+              //           <div>
+              //             <small>Author: ' . $author . '</small>
+              //           </div>
+              //           <div>
+              //             <small>Branch: ' . $branch . '</small>
+              //           </div>
+              //           <div>
+              //             <small>Customer Branch: ' . $customerBranch . '</small>
+              //           </div>
+              //           <div>
+              //             <small>Customer Card Code: ' . $customerCardCode . '</small>
+              //           </div>
+              //         </div>
+              //         <div class="col">
+              //           <small>Remarks:</small>
+              //           <div class="small border-top border-1 mt-2 pt-2">' . $remarks . '</div>
+              //         </div>
+              //       </div>
+              //     </li>';
+              //     }
+              //   } else {
+              //     echo '<li class="list-group rounded-1 p-3 shadow-sm">
+              //   <div>
+              //     <h4 class="fw-bold">No Record Found.</h4>
+              //   </div>
+              // </li>';
+              //   }
+              // } catch (PDOException $e) {
+              //   errorHandler(E_WARNING, $e->getMessage(), $e->getFile(), $e->getLine());
+              // }
+
+              ?>
             </div>
           </div>
         </div>
@@ -629,9 +619,29 @@
   <script src="assets/vendor/simple-datatables/simple-datatables.js"></script>
   <script src="assets/vendor/tinymce/tinymce.min.js"></script>
   <script src="assets/vendor/php-email-form/validate.js"></script>
+  <script src="lib/sweetalert/dist/sweetalert2.all.min.js"></script>
+  <script src="lib/jquery/jquery-3.7.1.min.js"></script>
 
   <!-- Template Main JS File -->
   <script src="assets/js/main.js"></script>
+
+  <script src="js/fetchCustomerDetails.js"></script>
+  <script>
+    document.addEventListener("DOMContentLoaded", function() {
+      // Initialize Tooltip
+      var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+      tooltipTriggerList.map(function(tooltipTriggerEl) {
+        return new bootstrap.Tooltip(tooltipTriggerEl);
+      });
+
+      // Initialize Modal Trigger for Post Comment Button
+      document.getElementById("postCommentBtn").addEventListener("click", function() {
+        var myModal = new bootstrap.Modal(document.getElementById('postCommentModal'));
+        myModal.show();
+      });
+    });
+  </script>
+  <script src="js/postComment.js"></script>
 
 </body>
 

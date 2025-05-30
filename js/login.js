@@ -20,7 +20,7 @@ $(document).ready(function () {
               showConfirmButton: false,
               allowOutsideClick: false,
               willClose: () => {
-                window.location = "./dashboard.html";
+                window.location = "./dashboard.php";
               },
               customClass: {
                 popup: "small-alert",
@@ -40,7 +40,7 @@ $(document).ready(function () {
               showConfirmButton: false,
               allowOutsideClick: false,
               willClose: () => {
-                window.location = "./dashboard.html";
+                window.location = "./dashboard.php";
               },
               customClass: {
                 popup: "small-alert",

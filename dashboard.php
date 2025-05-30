@@ -42,23 +42,9 @@
             </a>
             <i class="bi bi-list toggle-sidebar-btn"></i>
         </div><!-- End Logo -->
-        <div class="search-bar">
-            <form class="search-form d-flex align-items-center" method="POST" action="#">
-                <input type="text" name="query" placeholder="Search" title="Enter search keyword">
-                <button type="submit" title="Search"><i class="bi bi-search"></i></button>
-            </form>
-        </div>
-        <!-- End Search Bar -->
         <nav class="header-nav ms-auto">
             <ul class="d-flex align-items-center">
-                <li class="nav-item d-block d-lg-none">
-                    <a class="nav-link nav-icon search-bar-toggle " href="#">
-                        <i class="bi bi-search"></i>
-                    </a>
-                </li>
-                <!-- End Search Icon-->
                 <li class="nav-item dropdown">
-
                     <a class="nav-link nav-icon" href="#" data-bs-toggle="dropdown">
                         <i class="bi bi-bell"></i>
                         <span class="badge bg-primary badge-number">4</span>
@@ -264,23 +250,23 @@
     <aside id="sidebar" class="sidebar">
         <ul class="sidebar-nav" id="sidebar-nav">
             <li class="nav-item">
-                <a class="nav-link" href="dashboard.php">
+                <a class="nav-link" href="#">
                     <i class="bi bi-grid"></i>
                     <span>Dashboard</span>
                 </a>
             </li>
             <li class="nav-item">
-                <a class="nav-link collapsed" href="cd.html">
+                <a class="nav-link collapsed" href="cd.php">
                     <i class="bi bi-person-bounding-box"></i>
                     <span>Customer</span>
                 </a>
             </li>
             <hr>
             <li class="nav-item">
-              <a href="" class="nav-link collapsed">
-              <i class="bi bi-box-arrow-right"></i>
-              <span>Log out</span>
-              </a>
+                <a href="" class="nav-link collapsed">
+                    <i class="bi bi-box-arrow-right"></i>
+                    <span>Log out</span>
+                </a>
             </li>
         </ul>
     </aside>
@@ -775,42 +761,42 @@
                                         radar: {
                                             // shape: 'circle',
                                             indicator: [{
-                                                name: 'Sales',
-                                                max: 6500
-                                            },
-                                            {
-                                                name: 'Administration',
-                                                max: 16000
-                                            },
-                                            {
-                                                name: 'Information Technology',
-                                                max: 30000
-                                            },
-                                            {
-                                                name: 'Customer Support',
-                                                max: 38000
-                                            },
-                                            {
-                                                name: 'Development',
-                                                max: 52000
-                                            },
-                                            {
-                                                name: 'Marketing',
-                                                max: 25000
-                                            }
+                                                    name: 'Sales',
+                                                    max: 6500
+                                                },
+                                                {
+                                                    name: 'Administration',
+                                                    max: 16000
+                                                },
+                                                {
+                                                    name: 'Information Technology',
+                                                    max: 30000
+                                                },
+                                                {
+                                                    name: 'Customer Support',
+                                                    max: 38000
+                                                },
+                                                {
+                                                    name: 'Development',
+                                                    max: 52000
+                                                },
+                                                {
+                                                    name: 'Marketing',
+                                                    max: 25000
+                                                }
                                             ]
                                         },
                                         series: [{
                                             name: 'Budget vs spending',
                                             type: 'radar',
                                             data: [{
-                                                value: [4200, 3000, 20000, 35000, 50000, 18000],
-                                                name: 'Allocated Budget'
-                                            },
-                                            {
-                                                value: [5000, 14000, 28000, 26000, 42000, 21000],
-                                                name: 'Actual Spending'
-                                            }
+                                                    value: [4200, 3000, 20000, 35000, 50000, 18000],
+                                                    name: 'Allocated Budget'
+                                                },
+                                                {
+                                                    value: [5000, 14000, 28000, 26000, 42000, 21000],
+                                                    name: 'Actual Spending'
+                                                }
                                             ]
                                         }]
                                     });
@@ -870,25 +856,25 @@
                                                 show: false
                                             },
                                             data: [{
-                                                value: 1048,
-                                                name: 'Search Engine'
-                                            },
-                                            {
-                                                value: 735,
-                                                name: 'Direct'
-                                            },
-                                            {
-                                                value: 580,
-                                                name: 'Email'
-                                            },
-                                            {
-                                                value: 484,
-                                                name: 'Union Ads'
-                                            },
-                                            {
-                                                value: 300,
-                                                name: 'Video Ads'
-                                            }
+                                                    value: 1048,
+                                                    name: 'Search Engine'
+                                                },
+                                                {
+                                                    value: 735,
+                                                    name: 'Direct'
+                                                },
+                                                {
+                                                    value: 580,
+                                                    name: 'Email'
+                                                },
+                                                {
+                                                    value: 484,
+                                                    name: 'Union Ads'
+                                                },
+                                                {
+                                                    value: 300,
+                                                    name: 'Video Ads'
+                                                }
                                             ]
                                         }]
                                     });
