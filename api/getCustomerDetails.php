@@ -1,6 +1,26 @@
 <?php
 
-include("../config/config.php");
+function errorHandler($errno, $errstr, $errfile, $errline)
+{
+    date_default_timezone_set('Asia/Manila');
+    $logMessage = "[" . date("Y-m-d H:i:s") . "] Error: [$errno] $errstr in $errfile on line $errline" . PHP_EOL;
+    file_put_contents('error_log.txt', $logMessage, FILE_APPEND);
+}
+
+set_error_handler("errorHandler");
+
+$servername = "192.168.101.68";
+$db = "SOA";
+$username = "sa";
+$password = "SB1Admin";
+
+try {
+    $conn = new PDO("sqlsrv:server=$servername;database=$db;TrustServerCertificate=true", $username, $password);
+    $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+} catch (PDOException $e) {
+    errorHandler(E_WARNING, $e->getMessage(), $e->getFile(), $e->getLine());
+    die("Connection failed: " . $e->getMessage());
+}
 
 header('Content-Type: application/json');
 
@@ -11,47 +31,20 @@ if ($_SERVER['REQUEST_METHOD'] === "POST") {
     $mdn = $_POST['mdn'] ?? '';
 
     try {
-        $query = "SELECT id, cardCode, cardName, mdn, repo_status FROM customers";
-        $conditions = [];
-        $params = [];
-
-        if ($cardCode !== '') {
-            $conditions[] = "cardCode = :cardCode";
-            $params[':cardCode'] = $cardCode;
-        }
-
-        if ($cardName !== '') {
-            $conditions[] = "cardName = :cardName";
-            $params[':cardName'] = $cardName;
-        }
-
-        if ($branch !== '') {
-            $conditions[] = "branch = :branch";
-            $params[':branch'] = $branch;
-        }
-
-        if ($mdn !== '') {
-            $conditions[] = "mdn = :mdn";
-            $params[':mdn'] = $mdn;
-        }
-
-        if (count($conditions) > 0) {
-            $query .= " WHERE " . implode(" AND ", $conditions);
-        } else {
-            echo json_encode([]);
-            exit;
-        }
-
-        // Log the query and parameters for debugging
-        file_put_contents("debug_sql.log", $query . "\n" . json_encode($params), FILE_APPEND);
+        $query = "EXEC [IAP_SOA].[dbo].[SEARCH_CUSTOMER] 
+                    @mCardCode_ = :cardCode, 
+                    @mCardName_ = :cardName, 
+                    @mBranch_ = :branch, 
+                    @mSalesInvoiceNo_ = :mdn";
 
         $stmt = $conn->prepare($query);
-        $stmt->execute($params);
 
+        $stmt->bindValue(':cardCode', $cardCode ?: '', PDO::PARAM_STR);
+        $stmt->bindValue(':cardName', $cardName ?: '', PDO::PARAM_STR);
+        $stmt->bindValue(':branch', $branch ?: '', PDO::PARAM_STR);
+        $stmt->bindValue(':mdn', $mdn ?: '', PDO::PARAM_STR);
+        $stmt->execute();
         $results = $stmt->fetchAll(PDO::FETCH_OBJ);
-
-        // Optional: Log the number of results returned
-        file_put_contents("debug_sql.log", "\nRows returned: " . count($results) . "\n", FILE_APPEND);
 
         echo json_encode($results);
     } catch (PDOException $e) {

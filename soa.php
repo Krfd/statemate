@@ -1,8 +1,5 @@
 <?php
-
-include("config/config.php");
-
-?>
+include("config/config.php"); ?>
 
 <!DOCTYPE html>
 <html lang="en">
@@ -11,19 +8,13 @@ include("config/config.php");
   <meta charset="utf-8">
   <meta content="width=device-width, initial-scale=1.0" name="viewport">
 
-  <title>Customer Details</title>
+  <title>Statemate - Statement of Account</title>
   <meta content="" name="description">
   <meta content="" name="keywords">
-
-  <!-- Favicons -->
   <link href="icons/logo.jpg" rel="icon">
   <link href="icons/logo.jpg" rel="IAP">
-
-  <!-- Google Fonts -->
   <link href="https://fonts.gstatic.com" rel="preconnect">
   <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i|Nunito:300,300i,400,400i,600,600i,700,700i|Poppins:300,300i,400,400i,500,500i,600,600i,700,700i" rel="stylesheet">
-
-  <!-- Vendor CSS Files -->
   <link href="assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
   <link href="assets/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
   <link href="assets/vendor/boxicons/css/boxicons.min.css" rel="stylesheet">
@@ -32,12 +23,122 @@ include("config/config.php");
   <link href="assets/vendor/remixicon/remixicon.css" rel="stylesheet">
   <link href="assets/vendor/simple-datatables/style.css" rel="stylesheet">
   <link href="lib/sweetalert/dist/sweetalert2.min.css" rel="stylesheet">
-
-  <!-- Template Main CSS File -->
   <link href="assets/css/style.css" rel="stylesheet">
+
+  <style>
+    .loader {
+      color: #000;
+      font-size: 45px;
+      text-indent: -9999em;
+      overflow: hidden;
+      width: 1em;
+      height: 1em;
+      border-radius: 50%;
+      position: relative;
+      transform: translateZ(0);
+      animation: mltShdSpin 1.7s infinite ease, round 1.7s infinite ease;
+    }
+
+    @keyframes mltShdSpin {
+      0% {
+        box-shadow: 0 -0.83em 0 -0.4em,
+          0 -0.83em 0 -0.42em, 0 -0.83em 0 -0.44em,
+          0 -0.83em 0 -0.46em, 0 -0.83em 0 -0.477em;
+      }
+
+      5%,
+      95% {
+        box-shadow: 0 -0.83em 0 -0.4em,
+          0 -0.83em 0 -0.42em, 0 -0.83em 0 -0.44em,
+          0 -0.83em 0 -0.46em, 0 -0.83em 0 -0.477em;
+      }
+
+      10%,
+      59% {
+        box-shadow: 0 -0.83em 0 -0.4em,
+          -0.087em -0.825em 0 -0.42em, -0.173em -0.812em 0 -0.44em,
+          -0.256em -0.789em 0 -0.46em, -0.297em -0.775em 0 -0.477em;
+      }
+
+      20% {
+        box-shadow: 0 -0.83em 0 -0.4em, -0.338em -0.758em 0 -0.42em,
+          -0.555em -0.617em 0 -0.44em, -0.671em -0.488em 0 -0.46em,
+          -0.749em -0.34em 0 -0.477em;
+      }
+
+      38% {
+        box-shadow: 0 -0.83em 0 -0.4em, -0.377em -0.74em 0 -0.42em,
+          -0.645em -0.522em 0 -0.44em, -0.775em -0.297em 0 -0.46em,
+          -0.82em -0.09em 0 -0.477em;
+      }
+
+      100% {
+        box-shadow: 0 -0.83em 0 -0.4em, 0 -0.83em 0 -0.42em,
+          0 -0.83em 0 -0.44em, 0 -0.83em 0 -0.46em, 0 -0.83em 0 -0.477em;
+      }
+    }
+
+    @keyframes round {
+      0% {
+        transform: rotate(0deg)
+      }
+
+      100% {
+        transform: rotate(360deg)
+      }
+    }
+
+    .loader-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: rgba(255, 255, 255, 0.6);
+      z-index: 9999;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      pointer-events: all;
+    }
+
+    #loader {
+      display: none;
+    }
+
+    .overall-progress {
+      overflow-y: auto;
+    }
+
+    .overall-progress::-webkit-scrollbar {
+      width: 5px;
+    }
+
+    .overall-progress::-webkit-scrollbar-track {
+      background: #CECECE;
+      border-radius: 50px;
+    }
+
+    .overall-progress::-webkit-scrollbar-thumb {
+      background: #33A1F1;
+      border-radius: 50px;
+    }
+
+    table thead {
+      position: sticky;
+      top: 0;
+      z-index: 1;
+      /* Make sure the header stays above other content */
+      background-color: #f8f9fa
+    }
+  </style>
 </head>
 
 <body>
+  <!-- Loader overlay on top -->
+  <div class="loader-overlay" id="loader">
+    <div class="loader"></div>
+  </div>
   <!-- POST COMMENT MODAL -->
   <div class="modal fade" id="postCommentModal" tabindex="-1" aria-labelledby="postCommentModalLabel" aria-hidden="true">
     <div class="modal-dialog">
@@ -56,15 +157,16 @@ include("config/config.php");
               <input type="hidden" name="customerBranch" id="customerBranch">
               <div class="col">
                 <label for="author">Author:</label>
-                <input type="text" name="author" class="form-control" id="author" required>
+                <input type="text" name="author" class="form-control" id="author" value="<?php echo $name ?>" readonly required>
               </div>
               <div class="col">
                 <label for="branchName">Branch:</label>
-                <select name="branchName" id="branchName" class="form-select" required>
-                  <option value="Agdao">AGDAO</option>
-                  <option value="Showroom">SHOWROOM</option>
-                  <option value="Viac">VIAC</option>
-                </select>
+                <!-- <select name="branchName" id="branchName" class="form-select" required>
+                  <option value="AGDAO">AGDAO</option>
+                  <option value="SHOWROOM">SHOWROOM</option>
+                  <option value="VIAC">VIAC</option>
+                </select> -->
+                <input type="text" name="branchName" id="branchName" value="<?php echo $branch ?>" class="form-control" readonly required>
               </div>
             </div>
             <div class="d-flex justify-content-between gap-3 col-12 mb-3">
@@ -90,7 +192,6 @@ include("config/config.php");
       </div>
     </div>
   </div>
-
   <!-- ======= Header ======= -->
   <header id="header" class="header fixed-top d-flex align-items-center">
     <div class="d-flex align-items-center justify-content-between">
@@ -100,209 +201,33 @@ include("config/config.php");
       </a>
       <i class="bi bi-list toggle-sidebar-btn"></i>
     </div>
-    <nav class="header-nav ms-auto">
-      <ul class="d-flex align-items-center">
-        <li class="nav-item dropdown">
-          <a class="nav-link nav-icon" href="#" data-bs-toggle="dropdown">
-            <i class="bi bi-bell"></i>
-            <span class="badge bg-primary badge-number">4</span>
-          </a>
-          <!-- End Notification Icon -->
-          <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow notifications">
-            <li class="dropdown-header">
-              You have 4 new notifications
-              <a href="#"><span class="badge rounded-pill bg-primary p-2 ms-2">View all</span></a>
-            </li>
-            <li>
-              <hr class="dropdown-divider">
-            </li>
-
-            <li class="notification-item">
-              <i class="bi bi-exclamation-circle text-warning"></i>
-              <div>
-                <h4>Lorem Ipsum</h4>
-                <p>Quae dolorem earum veritatis oditseno</p>
-                <p>30 min. ago</p>
-              </div>
-            </li>
-            <li>
-              <hr class="dropdown-divider">
-            </li>
-            <li class="notification-item">
-              <i class="bi bi-x-circle text-danger"></i>
-              <div>
-                <h4>Atque rerum nesciunt</h4>
-                <p>Quae dolorem earum veritatis oditseno</p>
-                <p>1 hr. ago</p>
-              </div>
-            </li>
-            <li>
-              <hr class="dropdown-divider">
-            </li>
-            <li class="notification-item">
-              <i class="bi bi-check-circle text-success"></i>
-              <div>
-                <h4>Sit rerum fuga</h4>
-                <p>Quae dolorem earum veritatis oditseno</p>
-                <p>2 hrs. ago</p>
-              </div>
-            </li>
-            <li>
-              <hr class="dropdown-divider">
-            </li>
-            <li class="notification-item">
-              <i class="bi bi-info-circle text-primary"></i>
-              <div>
-                <h4>Dicta reprehenderit</h4>
-                <p>Quae dolorem earum veritatis oditseno</p>
-                <p>4 hrs. ago</p>
-              </div>
-            </li>
-            <li>
-              <hr class="dropdown-divider">
-            </li>
-            <li class="dropdown-footer">
-              <a href="#">Show all notifications</a>
-            </li>
-          </ul>
-          <!-- End Notification Dropdown Items -->
-        </li>
-        <!-- End Notification Nav -->
-        <li class="nav-item dropdown">
-          <a class="nav-link nav-icon" href="#" data-bs-toggle="dropdown">
-            <i class="bi bi-chat-left-text"></i>
-            <span class="badge bg-success badge-number">3</span>
-          </a>
-          <!-- End Messages Icon -->
-          <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow messages">
-            <li class="dropdown-header">
-              You have 3 new messages
-              <a href="#"><span class="badge rounded-pill bg-primary p-2 ms-2">View all</span></a>
-            </li>
-            <li>
-              <hr class="dropdown-divider">
-            </li>
-            <li class="message-item">
-              <a href="#">
-                <img src="assets/img/messages-1.jpg" alt="" class="rounded-circle">
-                <div>
-                  <h4>Maria Hudson</h4>
-                  <p>Velit asperiores et ducimus soluta repudiandae labore officia est ut...</p>
-                  <p>4 hrs. ago</p>
-                </div>
-              </a>
-            </li>
-            <li>
-              <hr class="dropdown-divider">
-            </li>
-            <li class="message-item">
-              <a href="#">
-                <img src="assets/img/messages-2.jpg" alt="" class="rounded-circle">
-                <div>
-                  <h4>Anna Nelson</h4>
-                  <p>Velit asperiores et ducimus soluta repudiandae labore officia est ut...</p>
-                  <p>6 hrs. ago</p>
-                </div>
-              </a>
-            </li>
-            <li>
-              <hr class="dropdown-divider">
-            </li>
-            <li class="message-item">
-              <a href="#">
-                <img src="assets/img/messages-3.jpg" alt="" class="rounded-circle">
-                <div>
-                  <h4>David Muldon</h4>
-                  <p>Velit asperiores et ducimus soluta repudiandae labore officia est ut...</p>
-                  <p>8 hrs. ago</p>
-                </div>
-              </a>
-            </li>
-            <li>
-              <hr class="dropdown-divider">
-            </li>
-            <li class="dropdown-footer">
-              <a href="#">Show all messages</a>
-            </li>
-          </ul>
-          <!-- End Messages Dropdown Items -->
-        </li>
-        <!-- End Messages Nav -->
-        <li class="nav-item dropdown pe-3">
-          <a class="nav-link nav-profile d-flex align-items-center pe-0" href="#" data-bs-toggle="dropdown">
-            <img src="assets/img/profile-img.jpg" alt="Profile" class="rounded-circle">
-            <span class="d-none d-md-block dropdown-toggle ps-2">K. Anderson</span>
-          </a>
-          <!-- End Profile Iamge Icon -->
-          <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow profile">
-            <li class="dropdown-header">
-              <h6>Kevin Anderson</h6>
-              <span>Web Designer</span>
-            </li>
-            <li>
-              <hr class="dropdown-divider">
-            </li>
-            <li>
-              <a class="dropdown-item d-flex align-items-center" href="users-profile.html">
-                <i class="bi bi-person"></i>
-                <span>My Profile</span>
-              </a>
-            </li>
-            <li>
-              <hr class="dropdown-divider">
-            </li>
-            <li>
-              <a class="dropdown-item d-flex align-items-center" href="users-profile.html">
-                <i class="bi bi-gear"></i>
-                <span>Account Settings</span>
-              </a>
-            </li>
-            <li>
-              <hr class="dropdown-divider">
-            </li>
-            <li>
-              <a class="dropdown-item d-flex align-items-center" href="pages-faq.html">
-                <i class="bi bi-question-circle"></i>
-                <span>Need Help?</span>
-              </a>
-            </li>
-            <li>
-              <hr class="dropdown-divider">
-            </li>
-            <li>
-              <a class="dropdown-item d-flex align-items-center" href="#">
-                <i class="bi bi-box-arrow-right"></i>
-                <span>Sign Out</span>
-              </a>
-            </li>
-          </ul>
-          <!-- End Profile Dropdown Items -->
-        </li>
-        <!-- End Profile Nav -->
-      </ul>
-    </nav>
     <!-- End Icons Navigation -->
   </header>
   <!-- End Header -->
   <!-- ======= Sidebar ======= -->
   <aside id="sidebar" class="sidebar">
     <ul class="sidebar-nav" id="sidebar-nav">
-      <li class="nav-item">
+      <!-- <li class="nav-item">
         <a class="nav-link collapsed" href="dashboard.php">
           <i class="bi bi-grid"></i>
           <span>Dashboard</span>
         </a>
-      </li>
-      <!-- End Contact Page Nav -->
+      </li> -->
       <li class="nav-item">
         <a class="nav-link" href="#">
           <i class="bi bi-person-bounding-box"></i>
-          <span>Customer</span>
+          <span>Statement of Account</span>
+        </a>
+      </li>
+      <li class="nav-item">
+        <a href="profile.php" class="nav-link collapsed">
+          <i class="bi bi-box-arrow-right"></i>
+          <span>Profile</span>
         </a>
       </li>
       <hr>
       <li class="nav-item">
-        <a href="" class="nav-link collapsed">
+        <a href="" class="nav-link collapsed" data-bs-toggle="modal" data-bs-target="#logout">
           <i class="bi bi-box-arrow-right"></i>
           <span>Log out</span>
         </a>
@@ -310,13 +235,39 @@ include("config/config.php");
     </ul>
   </aside>
   <!-- End Sidebar-->
-
+  <!-- LOGOUT -->
+  <div
+    class="modal p-4 py-md-5 fade"
+    tabindex="-1"
+    role="dialog"
+    id="logout">
+    <div class="modal-dialog modal-dialog-centered modal-sm" role="document">
+      <div class="modal-content rounded-3 shadow">
+        <div class="modal-body p-4 text-center">
+          <h5 class="mb-0 fw-semibold">Log out your account?</h5>
+        </div>
+        <div class="modal-footer flex-nowrap p-0">
+          <button
+            type="button"
+            class="btn btn-lg btn-link fs-6 text-decoration-none col-6 py-3 m-0 rounded-0 border-end">
+            <a href="config/config.php?logout=true" class="text-decoration-none"><strong>Logout</strong></a>
+          </button>
+          <button
+            type="button"
+            class="btn btn-lg btn-link fs-6 text-decoration-none col-6 py-3 m-0 rounded-0"
+            data-bs-dismiss="modal">
+            Cancel
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
   <main id="main" class="main">
     <section class="section dashboard">
       <div class="row">
-        <div class="container d-flex flex-column flex-md-row justify-content-between bg-light gap-3">
+        <div class="container d-flex flex-column flex-lg-row justify-content-between bg-light gap-3">
           <!-- FIRST COLUMN -->
-          <div class="col col-lg-3 shadow-sm p-3 p-md-5 border-end border-5 border-secondary-subtle">
+          <div class="col col-lg-3 shadow-sm p-3 p-md-5 border-end border-5 border-secondary-subtle overall-progress" style="max-height: 90vh">
             <h1 class="fw-bold">Statement of Account</h1>
             <div>
               <form id="searchSOA" method="post" class="mt-3" onsubmit="fetchData(event)">
@@ -327,23 +278,25 @@ include("config/config.php");
                 <div class="d-flex flex-column gap-3 mt-3">
                   <div class="d-flex gap-3 align-items-end">
                     <label for="code" class="form-label col-auto">Card Code:</label>
-                    <input type="text" class="form-control" name="cardcode" id="code">
+                    <input type="text" class="form-control" name="cardcode" id="code" style="margin-left: 5px;">
                   </div>
                   <div class="d-flex gap-3 align-items-end">
                     <label for="name" class="form-label col-auto">Card Name:</label>
                     <input type="text" class="form-control" name="cardname" id="name">
                   </div>
-                  <div class="d-flex gap-3 align-items-end">
+                  <div class=" d-flex gap-3 align-items-end">
                     <label for="branch" class="form-label col-auto">Branch:</label>
-                    <select name="branch" id="branch" class="form-select">
+                    <select name="branch" id="branch" class="form-select" style="margin-left: 30px;" required>
+                      <option value="" selected>Select Branch</option>
                       <option value="Agdao">AGDAO</option>
                       <option value="Showroom">SHOWROOM</option>
                       <option value="Viac">VIAC</option>
+                      <option value="Cadiz">CADIZ</option>
                     </select>
                   </div>
                   <div class="d-flex gap-3 align-items-end">
                     <label for="si" class="form-label col-auto">MDN/SI #:</label>
-                    <input type="text" class="form-control" name="mdn" id="si">
+                    <input type="text" class="form-control" name="mdn" id="si" style="margin-left: 10px;">
                   </div>
                 </div>
                 <div class="d-flex justify-content-end gap-1 mt-3">
@@ -351,30 +304,63 @@ include("config/config.php");
                   <button onclick="location.reload()" class="btn btn-success"><i class="bi bi-arrow-clockwise d-block d-md-none"></i> <span class="d-none d-md-inline-flex">Refresh</span></button>
                 </div>
               </form>
-              <div class="mt-3">
+              <div class="my-3">
                 <h6>Search Result: </h6>
-                <div class="table-responsive">
+                <div class="table-responsive overflow-y-auto" style="max-height: 300px">
                   <table class="table datatables table-hover table-striped w-100">
                     <thead>
                       <tr>
                         <th>Card Name</th>
-                        <th>MDN/SI #</th>
+                        <th colspan="2">MDN/SI #</th>
                         <th>DocStatus</th>
                       </tr>
                     </thead>
                     <tbody id="searchResults">
                       <tr>
-                        <td colspan="3" class="text-center">No Data Found</td>
+                        <td colspan="4" class="text-center">No Data Found</td>
                       </tr>
                     </tbody>
                   </table>
                 </div>
               </div>
+              <div class="d-flex flex-column gap-2 mt-3 border rounded p-3 d-none" id="unitHistory">
+                <div class="d-flex gap-3">
+                  <button class="btn btn-sm btn-link" data-bs-toggle="modal" data-bs-target="#transactions">Transaction(s)</button>
+                  <button class="btn btn-sm btn-link" data-bs-toggle="modal" data-bs-target="#ledger">Ledger</button>
+                </div>
+                <div class="d-flex justify-content-between border-bottom py-2">
+                  <div class="fw-bold">1 - 30 Days</div>
+                  <div id="upTo30">0.00</div>
+                </div>
+                <div class="d-flex justify-content-between border-bottom py-2">
+                  <div class="fw-bold">31 - 60 Days</div>
+                  <div id="upTo60">0.00</div>
+                </div>
+                <div class="d-flex justify-content-between border-bottom py-2">
+                  <div class="fw-bold">61 - 90 Days</div>
+                  <div id="upTo90">0.00</div>
+                </div>
+                <div class="d-flex justify-content-between border-bottom py-2">
+                  <div class="fw-bold">Over 360 Days</div>
+                  <div id="over360">0.00</div>
+                </div>
+                <div class="d-flex justify-content-between border-bottom py-2">
+                  <div class="fw-bold">Total Arrears</div>
+                  <div id="totalArrears">0.00</div>
+                </div>
+                <div class="d-flex justify-content-between border-bottom py-2">
+                  <div class="fw-bold">Total Penalty</div>
+                  <div id="totalPenalty">0.00</div>
+                </div>
+                <div class="d-flex justify-content-between py-2">
+                  <div class="fw-bold">Balance</div>
+                  <div id="balance">0.00</div>
+                </div>
+              </div>
             </div>
           </div>
-
           <!-- MIDDLE COLUMN -->
-          <div class="col col-lg-5 shadow-sm p-3 p-md-5 border-end border-5 border-secondary-subtle">
+          <div class="col col-lg-5 shadow-sm p-3 p-md-5 border-end border-5 border-secondary-subtle overall-progress" style="max-height: 90vh">
             <div class="d-flex justify-content-between align-items-center">
               <h1 class="fw-bold">Customer Details</h1>
               <div class="d-flex gap-2">
@@ -386,16 +372,16 @@ include("config/config.php");
             </div>
             <form id="userForm" method="post" class="mt-3">
               <div class="d-flex flex-column gap-3">
-                <div class="d-flex align-items-center gap-3 col-12 col-md-6">
+                <div class="d-flex align-items-center gap-3 col-12 col-md-auto">
                   <label for="cname" class="col-auto">Customer Name:</label>
                   <input type="text" class="form-control" id="cname" readonly required>
                 </div>
-                <div class="d-flex align-items-center gap-3 col-12 col-md-6">
+                <div class="d-flex align-items-center gap-3 col-12 col-md-auto">
                   <label for="address" class="col-auto">Address:</label>
-                  <input type="text" class="form-control" id="address" readonly required>
+                  <input type="text" class="form-control" style="margin-left: 60px;" id="address" readonly required>
                 </div>
                 <div class="d-flex flex-column flex-md-row gap-3">
-                  <!-- FIRST -->
+                  <!-- FIRST COLUMN -->
                   <div class="d-flex flex-column gap-3 col">
                     <div class="d-flex flex-column gap-2">
                       <label for="inv_no" class="col-auto">Manual Inv #:</label>
@@ -418,7 +404,7 @@ include("config/config.php");
                       <input type="text" class="form-control" name="uds" id="uds" readonly required>
                     </div>
                   </div>
-                  <!-- SECOND -->
+                  <!-- SECOND COLUMN -->
                   <div class="d-flex flex-column gap-3 col">
                     <div>
                       <label for="branch" class="form-label">Branch:</label>
@@ -445,8 +431,8 @@ include("config/config.php");
                       <input type="text" class="form-control" name="redeem_date" id="rdate" readonly required>
                     </div>
                   </div>
-                  <!-- THIRD -->
-                  <div class="d-flex flex-row flex-md-column gap-3 col align-self-start align-self-md-end">
+                  <!-- THIRD COLUMN -->
+                  <div class="d-flex flex-row flex-md-column gap-3 align-self-start align-self-md-end col col-lg-3">
                     <div>
                       <label for="area" class="form-label">Area:</label>
                       <br>
@@ -472,133 +458,108 @@ include("config/config.php");
                         <th>Serial</th>
                       </tr>
                     </thead>
-                    <tbody>
-                      <tr>
-                        <td>3467</td>
-                        <td>Split Type</td>
-                        <td>Haier</td>
-                        <td>43568</td>
-                      </tr>
+                    <tbody id="itemDetails">
                     </tbody>
                   </table>
                 </div>
               </div>
-              <div class="table-responsive mt-3 mt-md-5">
-                <table class="table table-hover table-striped w-100" id="myTable2">
+              <div class="table-responsive mt-3 mt-md-5 overall-progress" style="max-height: 300px;">
+                <table class="table table-hover table-striped w-100 datatables" id="myTable2">
                   <thead>
                     <tr>
-                      <th>DateParticular</th>
-                      <th>Particular</th>
+                      <th>Date</th>
+                      <th colspan="3">Particular</th>
                       <th>Debit</th>
                       <th>Credit</th>
                       <th>Rebate</th>
                     </tr>
                   </thead>
-                  <tbody>
-                    <tr>
-                      <td>2023-10-01</td>
-                      <td>Initial Payment</td>
-                      <td>1000.00</td>
-                      <td>0.00</td>
-                      <td>0.00</td>
-                    </tr>
-                    <tr>
-                      <td>2023-10-15</td>
-                      <td>Monthly Installment</td>
-                      <td>500.00</td>
-                      <td>0.00</td>
-                      <td>0.00</td>
-                    </tr>
+                  <tbody id="itemPayments">
                   </tbody>
                 </table>
               </div>
             </form>
           </div>
-
           <!-- THIRD COLUMN -->
-          <div class="col shadow-sm p-3 py-md-5 border-end border-5 border-secondary-subtle overflow-y-scroll" style="max-height: 90vh">
+          <div class="col shadow-sm p-3 py-md-5 border-end border-5 border-secondary-subtle overall-progress" style="max-height: 90vh">
             <h1 class="fw-bold">Records</h1>
             <div class="list-group list-group-flush gap-3">
-
               <?php
+              // MAKE THIS AN API INSTEAD
+              $history = $conn->prepare("SELECT * FROM posts ORDER BY created_date DESC");
+              // ADD IN THE CONDITION (CUSTOMER CARD CODE, BRANCH)
+              $history->execute();
 
-              // // MAKE THIS AN API INSTEAD
-              // $history = $conn->prepare("SELECT * FROM posts");
-              // // ADD IN THE CONDITION (CUSTOMER CARD CODE, BRANCH)
-              // $history->execute();
+              $getHistory = $history->fetchAll(PDO::FETCH_OBJ);
 
-              // $getHistory = $history->fetchAll(PDO::FETCH_OBJ);
+              try {
+                if ($getHistory) {
+                  foreach ($getHistory as $item) {
+                    $data_id = $item->id;
+                    $customerId = $item->cust_id;
+                    $customerCardCode = $item->cust_cardCode;
+                    $customerCardName = $item->cust_cardName;
+                    $customerBranch = $item->cust_branch;
+                    $author = $item->author;
+                    $remarks = $item->remarks;
+                    $branch = $item->branch;
+                    $postingDate = $item->post_date;
+                    $createdDate = $item->created_date;
+                    $modified = $item->modified;
 
-              // try {
-              //   if ($getHistory) {
-              //     foreach ($getHistory as $item) {
-              //       $data_id = $item->id;
-              //       $customerId = $item->customerId;
-              //       $customerCardCode = $item->customerCardCode;
-              //       $customerCardName = $item->customerCardName;
-              //       $customerBranch = $item->customerBranch;
-              //       $author = $item->author;
-              //       $remarks = $item->remarks;
-              //       $branch = $item->branch;
-              //       $postingDate = $item->postingDate;
-              //       $createdDate = $item->createdDate;
-              //       $created = $item->created;
-              //       $modified = $item->modified;
+                    $createdDate = date("M d, Y", strtotime($createdDate));
+                    $postingDate = date("M d, Y", strtotime($postingDate));
 
-              //       $createdDate = date("M d, Y", strtotime($createdDate));
-              //       $postingDate = date("M d, Y", strtotime($postingDate));
+                    if (!empty($modified)) {
+                      $created = date("M d, Y", strtotime($modified));
+                    } else {
+                      $created = date("M d, Y", strtotime($createdDate));
+                    }
 
-              //       if (!empty($modified)) {
-              //         $created = date("M d, Y", strtotime($modified));
-              //       } else {
-              //         $created = date("M d, Y", strtotime($created));
-              //       }
-
-              //       echo '<li class="list-group-item rounded-1 p-3 shadow-sm">
-              //       <div class="d-flex justify-content-between align-items-start">
-              //         <h4 class="fw-bold">' . $created . '</h4>
-              //         <button type="button" class="btn btn-dark btn-sm" data-bs-toggle="modal" data-bs-target="' . $data_id . '">Edit</button>
-              //       </div>
-              //       <hr>
-              //       <div class="d-flex flex-column flex-md-row gap-3 gap-md-5">
-              //         <div class="d-flex flex-column gap-1">
-              //           <div>
-              //             <small>Posting Date: ' . $postingDate . '</small>
-              //           </div>
-              //           <div>
-              //             <small>Created Date: ' . $createdDate . '</small>
-              //           </div>
-              //           <div>
-              //             <small>Author: ' . $author . '</small>
-              //           </div>
-              //           <div>
-              //             <small>Branch: ' . $branch . '</small>
-              //           </div>
-              //           <div>
-              //             <small>Customer Branch: ' . $customerBranch . '</small>
-              //           </div>
-              //           <div>
-              //             <small>Customer Card Code: ' . $customerCardCode . '</small>
-              //           </div>
-              //         </div>
-              //         <div class="col">
-              //           <small>Remarks:</small>
-              //           <div class="small border-top border-1 mt-2 pt-2">' . $remarks . '</div>
-              //         </div>
-              //       </div>
-              //     </li>';
-              //     }
-              //   } else {
-              //     echo '<li class="list-group rounded-1 p-3 shadow-sm">
-              //   <div>
-              //     <h4 class="fw-bold">No Record Found.</h4>
-              //   </div>
-              // </li>';
-              //   }
-              // } catch (PDOException $e) {
-              //   errorHandler(E_WARNING, $e->getMessage(), $e->getFile(), $e->getLine());
-              // }
-
+                    echo '<li class="list-group-item rounded-1 p-3 shadow-sm">
+                    <div class="d-flex justify-content-between align-items-start">
+                      <h4 class="fw-bold">' . $created . '</h4>
+                      <button type="button" class="btn btn-dark btn-sm" data-bs-toggle="modal" data-bs-target="' . $data_id . '">Edit</button>
+                    </div>
+                    <hr>
+                    <div class="d-flex flex-column flex-md-row gap-3 gap-md-5">
+                      <div class="d-flex flex-column gap-1">
+                        <div>
+                          <small>Posting Date: ' . $postingDate . '</small>
+                        </div>
+                        <div>
+                          <small>Created Date: ' . $createdDate . '</small>
+                        </div>
+                        <div>
+                          <small>Author: ' . $author . '</small>
+                        </div>
+                        <div>
+                          <small>Branch: ' . $branch . '</small>
+                        </div>
+                        <div>
+                          <small>Customer Branch: ' . $customerBranch . '</small>
+                        </div>
+                        <div>
+                          <small>Customer Card Code: ' . $customerCardCode . '</small>
+                        </div>
+                      </div>
+                      <div class="col">
+                        <small class="fw-bold">Remarks:</small>
+                        <div class="small border-top border-1 mt-2 pt-2">' . $remarks . '</div>
+                      </div>
+                    </div>
+                  </li>';
+                  }
+                } else {
+                  echo '<li class="list-group rounded-1 p-3 shadow-sm">
+                <div>
+                  <h4 class="fw-bold">No Record Found.</h4>
+                </div>
+              </li>';
+                }
+              } catch (PDOException $e) {
+                errorHandler(E_WARNING, $e->getMessage(), $e->getFile(), $e->getLine());
+              }
               ?>
             </div>
           </div>
@@ -607,6 +568,50 @@ include("config/config.php");
     </section>
   </main>
   <!-- End #main -->
+
+  <!-- LEDGER -->
+  <div class="modal fade" tabindex="-1" role="dialog" id="ledger">
+    <div class="modal-dialog modal-dialog-centered modal-lg modal-dialog-scrollable">
+      <div class="modal-content rounded-3 shadow">
+        <div class="modal-body p-4 text-center">
+          <h2 class="fw-bold">Ledger</h2>
+          <div class="table-responsive">
+            <table class="table table-borderless datatables" id="myTable">
+              <thead>
+                <tr>
+                  <th>#</th>
+                  <th>Due</th>
+                  <th>Total</th>
+                  <th>Paid</th>
+                  <th>Days</th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody id="ledgerBody">
+                <!-- BODY FROM API LEDGER.PHP -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TRANSACTIONS -->
+  <div class="modal fade" tabindex="-1" role="dialog" id="transactions">
+    <div class="modal-dialog modal-dialog-centered modal-sm">
+      <div class="modal-content rounded-3 shadow">
+        <div class="modal-body p-4 text-center">
+          <h2 class="fw-bold">Transactions</h2>
+          <div class="table-responsive">
+            <table class="table table-borderless datatables" id="transTable">
+
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 
   <a href="#" class="back-to-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>
 
@@ -642,7 +647,27 @@ include("config/config.php");
     });
   </script>
   <script src="js/postComment.js"></script>
+  <script>
+    setInterval(function() {
+      // Call the same PHP file
+      fetch('<?= $_SERVER['PHP_SELF'] ?>', {
+          method: 'GET',
+          headers: {
+            'X-Requested-With': 'XMLHttpRequest'
+          }
+        })
+        .then(response => response.text())
+        .then(data => {
+          if (data) {
+            document.getElementById('userActivity').innerHTML = data;
+          }
+          //  else {
+          //   document.getElementById('userActivity').innerHTML = "<p>No activities...</p>";
+          // }
 
+        });
+    }, 1000);
+  </script>
 </body>
 
 </html>

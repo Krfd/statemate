@@ -1,7 +1,29 @@
 <?php
 
+include("config/config.php");
+
 $loginKey = bin2hex(random_bytes(128));
 $loginToken = hash_hmac('sha256', 'For login', $loginKey);
+
+if (isset($_SESSION['id'])) {
+    header("Location: soa.php");
+    exit();
+}
+
+if (!isset($_SESSION['id']) && isset($_COOKIE['rememberToken'])) {
+    $token = $_COOKIE['rememberToken'];
+
+    $stmt = $conn->prepare("SELECT id, tokenExpiry FROM users WHERE rememberToken = ?");
+    $stmt->execute([$token]);
+    $user = $stmt->fetch(PDO::FETCH_OBJ);
+
+    if ($user && strtotime($user->tokenExpiry) > time()) {
+        $_SESSION['id'] = $user->id;
+        header("Location: soa.php");
+    } else {
+        setcookie('rememberToken', '', time() - 3600, '/');
+    }
+}
 
 ?>
 
@@ -15,18 +37,12 @@ $loginToken = hash_hmac('sha256', 'For login', $loginKey);
     <title>Login</title>
     <meta content="" name="description">
     <meta content="" name="keywords">
-
-    <!-- Favicons -->
     <link href="icons/logo.jpg" rel="icon">
     <link href="icons/logo.jpg" rel="apple-touch-icon">
-
-    <!-- Google Fonts -->
     <link href="https://fonts.gstatic.com" rel="preconnect">
     <link
         href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i|Nunito:300,300i,400,400i,600,600i,700,700i|Poppins:300,300i,400,400i,500,500i,600,600i,700,700i"
         rel="stylesheet">
-
-    <!-- Vendor CSS Files -->
     <link href="assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
     <link href="assets/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
     <link href="assets/vendor/boxicons/css/boxicons.min.css" rel="stylesheet">
@@ -34,11 +50,7 @@ $loginToken = hash_hmac('sha256', 'For login', $loginKey);
     <link href="assets/vendor/quill/quill.bubble.css" rel="stylesheet">
     <link href="assets/vendor/remixicon/remixicon.css" rel="stylesheet">
     <link href="assets/vendor/simple-datatables/style.css" rel="stylesheet">
-
-    <!-- Template Main CSS File -->
     <link href="assets/css/style.css" rel="stylesheet">
-
-    <!-- ALERT -->
     <link href="lib/sweetalert/dist/sweetalert2.min.css" rel="stylesheet">
 </head>
 
@@ -64,16 +76,6 @@ $loginToken = hash_hmac('sha256', 'For login', $loginKey);
                                         <input type="hidden" name="loginKey" value="<?php echo $loginKey ?>">
                                         <input type="hidden" name="loginToken" value="<?php echo $loginToken ?>">
                                         <div class="col-12">
-                                            <label for="dept" class="form-label">Department</label>
-                                            <div class="input-group has-validation">
-                                                <select name="dept" id="dept" class="form-select" required>
-                                                    <option value="AR">AR</option>
-                                                    <option value="Audit">Audit</option>
-                                                    <option value="Head Office">HEAD OFFICE</option>
-                                                </select>
-                                            </div>
-                                        </div>
-                                        <div class="col-12">
                                             <label for="username" class="form-label">Username</label>
                                             <div class="input-group has-validation">
                                                 <input type="text" name="username" class="form-control" id="username" required>
@@ -96,7 +98,7 @@ $loginToken = hash_hmac('sha256', 'For login', $loginKey);
                                             <button class="btn btn-primary w-100" type="submit">Login</button>
                                         </div>
                                         <div class="col-12">
-                                            <p class="small mb-0 text-center"><a href="forgot.php">Forgot password?</a></p>
+                                            <p class="small mb-0 text-center"><a href="" id="promptPasswordReset" data-bs-toggle="modal" data-bs-target="#forgotPassword">Forgot password?</a></p>
                                         </div>
                                     </form>
                                 </div>
@@ -126,7 +128,15 @@ $loginToken = hash_hmac('sha256', 'For login', $loginKey);
     <!-- Template Main JS File -->
     <script src="assets/js/main.js"></script>
     <script src="js/login.js"></script>
-
+    <script>
+        document.getElementById("promptPasswordReset").addEventListener("click", function() {
+            Swal.fire({
+                icon: "warning",
+                title: "To reset your password, please contact the HEAD OFFICE",
+                confirmButtonText: "OKAY",
+            });
+        })
+    </script>
 </body>
 
 </html>

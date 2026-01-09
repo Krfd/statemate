@@ -20,7 +20,8 @@ $(document).ready(function () {
               showConfirmButton: false,
               allowOutsideClick: false,
               willClose: () => {
-                window.location = "./dashboard.php";
+                // window.location = "./dashboard.php";
+                window.location = "./soa.php";
               },
               customClass: {
                 popup: "small-alert",
@@ -40,7 +41,7 @@ $(document).ready(function () {
               showConfirmButton: false,
               allowOutsideClick: false,
               willClose: () => {
-                window.location = "./dashboard.php";
+                window.location = "admin/dashboard.php";
               },
               customClass: {
                 popup: "small-alert",
@@ -80,7 +81,7 @@ $(document).ready(function () {
             });
             break;
           case "invalidcsrf":
-            location.href = "./config.php?logout=true";
+            location.href = "./config/config.php?logout=true";
             break;
           default:
             Swal.fire({
@@ -91,6 +92,20 @@ $(document).ready(function () {
               allowOutsideClick: false,
             });
         }
+      },
+      error: function (xhr, status, error) {
+        console.log("Status:", status);
+        console.log("Error:", error);
+        console.log("Response:", xhr.responseText);
+
+        Swal.fire({
+          icon: "error",
+          title: "Something went wrong",
+          text: "Please try again later.",
+          confirmButtonText: "OKAY",
+          confirmButtonColor: "#d33",
+          allowOutsideClick: false,
+        });
       },
     });
   });

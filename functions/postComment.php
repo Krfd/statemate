@@ -1,8 +1,8 @@
 <?php
 
-
 include("../config/config.php");
 
+$authorId = $_POST['user_id'];
 $customerId = $_POST['customerId'];
 $customerCardCode = $_POST['customerCardCode'];
 $customerCardName = $_POST['customerCardName'];
@@ -15,17 +15,18 @@ $remarks = $_POST['remarks'];
 
 try {
 
-    $post = $conn->prepare("INSERT INTO posts (customerId, customerCardCode, customerCardName, customerBranch, author, remarks, branch, postingDate, createdDate) 
-    VALUES (:customerId, :customerCardCode, :customerCardName, :customerBranch, :author, :remarks, :branch, :postingDate, :createdDate)");
-    $post->bindParam(":customerId", $customerId);
-    $post->bindParam(":customerCardCode", $customerCardCode);
-    $post->bindParam(":customerCardName", $customerCardName);
-    $post->bindParam(":customerBranch", $customerBranch);
+    $post = $conn->prepare("INSERT INTO posts (authorId, author, cust_id, cust_cardCode, cust_cardName, cust_branch, remarks, branch, post_date, created_date, modified) 
+    VALUES (:authorId, :author, :cust_id, :cust_cardCode, :cust_cardName, :cust_branch, :remarks, :branch, :post_date, :created_date, SYSDATETIME())");
+    $post->bindParam(":authorId", $authorId);
     $post->bindParam(":author", $author);
+    $post->bindParam(":cust_id", $customerId);
+    $post->bindParam(":cust_cardCode", $customerCardCode);
+    $post->bindParam(":cust_cardName", $customerCardName);
+    $post->bindParam(":cust_branch", $customerBranch);
     $post->bindParam(":remarks", $remarks);
     $post->bindParam(":branch", $branchName);
-    $post->bindParam(":postingDate", $postingDate);
-    $post->bindParam(":createdDate", $createdDate);
+    $post->bindParam(":post_date", $postingDate);
+    $post->bindParam(":created_date", $createdDate);
     $post->execute();
 
     echo "posted";

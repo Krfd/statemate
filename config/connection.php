@@ -1,7 +1,5 @@
 <?php
 
-// include("../config/config.php");
-
 function errorHandler($errno, $errstr, $errfile, $errline)
 {
     date_default_timezone_set('Asia/Manila');
@@ -16,35 +14,10 @@ $db = "SOA";
 $username = "sa";
 $password = "SB1Admin";
 
-// check connection
 try {
     $conn = new PDO("sqlsrv:server=$servername;database=$db;TrustServerCertificate=true", $username, $password);
     $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 } catch (PDOException $e) {
     errorHandler(E_WARNING, $e->getMessage(), $e->getFile(), $e->getLine());
     die("Connection failed: " . $e->getMessage());
-}
-
-header('Content-Type: application/json');
-
-if ($_SERVER['REQUEST_METHOD'] === "POST") {
-    $id = $_POST['id'] ?? '';
-
-    try {
-
-        $query = "EXEC [IAP_SOA].[dbo].[SEARCH_CUSTOMER_ITEMSOLD] 
-                    @mDocEntry_ = :DocEntry";
-
-        $stmt = $conn->prepare($query);
-
-        $stmt->bindValue(':DocEntry', $id, PDO::PARAM_INT);
-
-        $stmt->execute();
-        $results = $stmt->fetchAll(PDO::FETCH_OBJ);
-
-        echo json_encode($results);
-    } catch (PDOException $e) {
-        echo json_encode(["error" => "An error occurred while fetching data"]);
-        errorHandler(E_WARNING, $e->getMessage(), $e->getFile(), $e->getLine());
-    }
 }
